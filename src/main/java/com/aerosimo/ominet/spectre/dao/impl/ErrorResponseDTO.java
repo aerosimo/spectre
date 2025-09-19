@@ -35,7 +35,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "ErrorResponseDTO")
-@XmlType(propOrder = {"errorRef", "errorTime", "errorCode", "errorMessage", "errorService"})
+@XmlType(propOrder = {"errorID","errorRef", "errorTime", "errorCode", "errorMessage", "errorService"})
 public class ErrorResponseDTO {
 
     private Integer errorID;
