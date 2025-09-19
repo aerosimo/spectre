@@ -99,19 +99,89 @@ The required dependencies are defined in `pom.xml`. Below are the key dependenci
 
 The SOAP web service is implemented in `com.aerosimo.ominet.spectre.service.api.SpectreSOAP.java`.
 
-Example SOAP Request:
+Example recordError SOAP Request:
 ```xml
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
-                  xmlns:card="http://service.ominet.aerosimo.com/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <card:validateCard>
-         <CardLongNumber>1234567890123456</CardLongNumber>
-      </card:validateCard>
-   </soapenv:Body>
-</soapenv:Envelope>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+               xmlns:err="https://aerosimo.com/api/ws/spectre">
+    <soap:Header/>
+    <soap:Body>
+        <err:recordError>
+            <faultcode>TE10001</faultcode>
+            <faultmessage>Random system fault</faultmessage>
+            <faultservicename>SoapUI</faultservicename>
+        </err:recordError>
+    </soap:Body>
+</soap:Envelope>
 ```
-
+Example recordError SOAP Response:
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <err:recordErrorResponse xmlns:err="https://aerosimo.com/api/ws/spectre">
+            <recordError>ERR|DCWINE62CGH28KQ3DSA0</recordError>
+        </err:recordErrorResponse>
+    </soap:Body>
+</soap:Envelope>
+```
+Example getTopErrors SOAP Request:
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+               xmlns:err="https://aerosimo.com/api/ws/spectre">
+    <soap:Header/>
+    <soap:Body>
+        <err:getTopErrors>
+            <records>4</records>
+        </err:getTopErrors>
+    </soap:Body>
+</soap:Envelope>
+```
+Example getTopErrors SOAP Response:
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Body>
+        <err:getTopErrorsResponse xmlns:err="https://aerosimo.com/api/ws/spectre">
+            <getTopErrors>
+                <errorID>6</errorID>
+                <errorRef>ERR|H13B8DNF47G4ZYCBUIWT</errorRef>
+                <errorTime>2025-09-18 23:46:04.18626 +1:00</errorTime>
+                <errorCode>-1722</errorCode>
+                <errorMessage>ORA-01722: invalid number</errorMessage>
+                <errorService>auth_pkg (LOG AUDIT): babyboi@omisore.co.uk</errorService>
+            </getTopErrors>
+            <getTopErrors>
+                <errorID>5</errorID>
+                <errorRef>ERR|CC4LEQH95INM78P55JR2</errorRef>
+                <errorTime>2025-09-18 23:39:35.909077 +1:00</errorTime>
+                <errorCode>-1722</errorCode>
+                <errorMessage>ORA-01722: invalid number</errorMessage>
+                <errorService>auth_pkg (LOG AUDIT): babyboi@omisore.co.uk</errorService>
+            </getTopErrors>
+            <getTopErrors>
+                <errorID>4</errorID>
+                <errorRef>ERR|9KLCR0DBN749V7MPOM8O</errorRef>
+                <errorTime>2025-09-17 22:55:31.169968 +1:00</errorTime>
+                <errorCode>-20001</errorCode>
+                <errorMessage>ORA-20001: Username is mandatory and cannot be empty.
+                    ORA-06512: at "DATASTEWARD.AUTHENTICATION_TRG", line 31
+                    ORA-06512: at "DATASTEWARD.AUTHENTICATION_TRG", line 7
+                    ORA-04088: error during execution of trigger 'DATASTEWARD.AUTHENTICATION_TRG'</errorMessage>
+                <errorService>auth_pkg (SIGNUP): babyboi@omisore.co.uk</errorService>
+            </getTopErrors>
+            <getTopErrors>
+                <errorID>2</errorID>
+                <errorRef>ERR|6RP2QXKKXFBTCNU9YZGH</errorRef>
+                <errorTime>2025-09-17 22:54:18.46433 +1:00</errorTime>
+                <errorCode>-20001</errorCode>
+                <errorMessage>ORA-20001: Username is mandatory and cannot be empty.
+                    ORA-06512: at "DATASTEWARD.AUTHENTICATION_TRG", line 31
+                    ORA-06512: at "DATASTEWARD.AUTHENTICATION_TRG", line 7
+                    ORA-04088: error during execution of trigger 'DATASTEWARD.AUTHENTICATION_TRG'</errorMessage>
+                <errorService>auth_pkg (SIGNUP): babyboi@omisore.co.uk</errorService>
+            </getTopErrors>
+        </err:getTopErrorsResponse>
+    </soap:Body>
+</soap:Envelope>
+```
 ---
 
 ![Aerosimo Logo.!](/img/logo.png "Aerosimo")
