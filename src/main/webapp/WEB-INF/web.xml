@@ -33,7 +33,7 @@
 
 <web-app>
 
-    <display-name>Astrology System (AS) | Aerosimo Ltd</display-name>
+    <display-name>Spectre | Aerosimo Ltd</display-name>
 
     <!-- Listener configuration for SOAP Service -->
     <listener>
@@ -66,4 +66,5 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
 </web-app>
