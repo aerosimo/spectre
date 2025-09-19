@@ -121,8 +121,10 @@
         <servlet.version>6.1.0</servlet.version>
         <log4j.version>2.25.1</log4j.version>
         <junit.version>5.13.4</junit.version>
+        <jersey.version>3.1.9</jersey.version>
         <jstl.version>3.0.1</jstl.version>
         <xml.version>4.0.3</xml.version>
+        <jws.version>3.0.0</jws.version>
     </properties>
 
     <dependencies>
@@ -170,14 +172,24 @@
             <version>${xml.version}</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.xml.ws</groupId>
-            <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-        <dependency>
             <groupId>jakarta.jws</groupId>
             <artifactId>jakarta.jws-api</artifactId>
-            <version>3.0.0</version>
+            <version>${jws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
     </dependencies>
 
