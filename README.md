@@ -39,7 +39,6 @@ Any reliance you place on such information is therefore strictly at your own ris
 > *Spectre is a lightweight, cross-platform service designed to log and track errors across applications and services. It provides both SOAP and REST APIs, along with a simple JSP-based interface for reviewing logged errors.*
 
 ---
-This project **Spectre** is built using **core Java**. Error logging mechanism for tracking system anomalies and exposes **SOAP** and **REST** web services. The project also includes a simple **JSP-based web interface** for reviewing and managing errors.
 
 ## Project Structure
 
@@ -58,7 +57,7 @@ This `README.md` gives an overview of the project structure and instructions on 
 
 ### Prerequisites
 
->- **Apache TomEE 10**: Apache TomEE 10 is the application server used during development, but any Jakarta EE 10-compliant server should work.
+>- **Apache TomEE 10**: is the application server used during development, but any Jakarta EE 10-compliant server should work.
 >- **Java 23**: Ensure you have Java 23 installed as TomEE 10 targets Jakarta EE 10.
 >- **Maven**: The project uses Maven for dependency management with any IDE of choice.
 
@@ -90,7 +89,7 @@ The required dependencies are defined in `pom.xml`. Below are the key dependenci
 
    After building the project, deploy the generated `WAR` file from the `target/` directory into the `webapps/` folder of your preferred Jakarta EE 10-compatible server.
 
-4. **Start preferred Jakarta EE 10-compatible server**:
+4. **Start your preferred Jakarta EE 10-compatible server**:
 
    Start server and access the application:
 
