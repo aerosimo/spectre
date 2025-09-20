@@ -74,13 +74,14 @@ public class SpectreSOAP {
             log.error(Response);
         }
         Response = ErrorVaultDAO.storeError(faultcode, faultmessage, faultservicename);
-        log.info(Response);
+        log.info("Successfully store new error into error vault with reference {}",Response);
         return Response;
     }
 
     @WebMethod(operationName = "getTopErrors")
     @WebResult(name = "getTopErrors", partName = "getTopErrorsResponse")
     public List<ErrorResponseDTO> getTopErrors(@XmlElement(required = true)@WebParam(name = "records", partName = "getTopErrorsRequest") int records) {
+        log.info("Successfully return top errors from error vault with records {}",records);
         return ErrorVaultDAO.getTopErrors(records);
     }
 }

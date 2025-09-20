@@ -83,8 +83,10 @@ public class Postmaster {
                     );
 
             // Open HTTP connection
-            URL url = new URL(ENDPOINT_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url;
+            url = new URL(ENDPOINT_URL);
+            HttpURLConnection conn;
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8");

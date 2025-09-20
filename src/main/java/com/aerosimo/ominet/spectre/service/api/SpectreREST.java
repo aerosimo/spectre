@@ -37,6 +37,8 @@ import com.aerosimo.ominet.spectre.dao.mapper.ErrorVaultDAO;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -45,6 +47,11 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SpectreREST {
 
+    private static final Logger log;
+
+    static {
+        log = LogManager.getLogger(SpectreREST.class.getName());
+    }
     /**
      * Store a new error in the Error Vault.
      * POST http://host:port/context/api/errors
@@ -55,6 +62,9 @@ public class SpectreREST {
                 request.getFaultCode() == null ||
                 request.getFaultMessage() == null ||
                 request.getFaultService() == null) {
+            log.error("Bad request - {}", SpectreREST.class.getName(), Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\":\"Missing required fields\"}")
+                    .build());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"error\":\"Missing required fields\"}")
                     .build();
@@ -65,7 +75,8 @@ public class SpectreREST {
                 request.getFaultMessage(),
                 request.getFaultService()
         );
-
+        log.info("Successfully store new error into error vault with reference {}",
+                Response.ok("{\"errorRef\":\"" + ref + "\"}").build());
         return Response.ok("{\"errorRef\":\"" + ref + "\"}").build();
     }
 
@@ -75,7 +86,9 @@ public class SpectreREST {
      */
     @GET
     public Response getTopErrors(@QueryParam("records") @DefaultValue("10") int records) {
-        List<ErrorResponseDTO> errors = ErrorVaultDAO.getTopErrors(records);
+        List<ErrorResponseDTO> errors;
+        errors = ErrorVaultDAO.getTopErrors(records);
+        log.info("Successfully return top errors from error vault with records {}",records);
         return Response.ok(errors).build();
     }
 }
