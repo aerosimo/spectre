@@ -34,7 +34,7 @@ package com.aerosimo.ominet.spectre.service.api;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
-@ApplicationPath("/api")   // all REST endpoints start with /api
+@ApplicationPath("/api")  // <--- all REST resources under /api
 public class RestApplication extends Application {
-    // empty is fine
+    // Empty is fine — TomEE discovers resources automatically
 }

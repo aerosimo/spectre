@@ -40,23 +40,16 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-/**
- * Spectre REST API to expose ErrorVaultDAO as JSON endpoints.
- * Requires JAX-RS (included with TomEE).
- */
-@Path("/spectre")
+@Path("/errors")   // <--- resource directly under /api/errors
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SpectreREST {
 
     /**
      * Store a new error in the Error Vault.
-     *
-     * Example: POST /api/spectre/errors
-     * Body: { "faultCode": "E100", "faultMessage": "Something broke", "faultService": "auth" }
+     * POST http://host:port/context/api/errors
      */
     @POST
-    @Path("/errors")
     public Response storeError(ErrorRequestDTO request) {
         if (request == null ||
                 request.getFaultCode() == null ||
@@ -78,11 +71,9 @@ public class SpectreREST {
 
     /**
      * Get top N errors from the Error Vault.
-     *
-     * Example: GET /api/spectre/errors?records=10
+     * GET http://host:port/context/api/errors?records=5
      */
     @GET
-    @Path("/errors")
     public Response getTopErrors(@QueryParam("records") @DefaultValue("10") int records) {
         List<ErrorResponseDTO> errors = ErrorVaultDAO.getTopErrors(records);
         return Response.ok(errors).build();
