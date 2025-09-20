@@ -117,6 +117,7 @@
         <jdbc.version>23.5.0.24.07</jdbc.version>
         <jakarta.version>10.0.0</jakarta.version>
         <servlet.version>6.1.0</servlet.version>
+        <jersey.version>3.1.11</jersey.version>
         <log4j.version>2.25.1</log4j.version>
         <jstl.version>3.0.1</jstl.version>
         <xml.version>4.0.3</xml.version>
@@ -172,6 +173,18 @@
             <groupId>jakarta.jws</groupId>
             <artifactId>jakarta.jws-api</artifactId>
             <version>${jws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
