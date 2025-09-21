@@ -50,25 +50,21 @@ public class ErrorVaultDAO {
         log = LogManager.getLogger(ErrorVaultDAO.class.getName());
     }
 
-    static String response;
-    static String sql;
-    static List<ErrorResponseDTO> errorList;
-    static Connection con;
-    static CallableStatement stmt;
-
+    private ErrorVaultDAO() {
+        // utility class
+    }
     public static String storeError(String faultCode, String faultMessage, String faultService) {
         log.info("Preparing to store new error into error vault");
-        try {
-            sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
-            con = Connect.dbase();
-            stmt = con.prepareCall(sql);
+        String response;
+        String sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
+        try (Connection con = Connect.dbase(); CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setString(1, faultCode);
             stmt.setString(2, faultMessage);
             stmt.setString(3, faultService);
             stmt.registerOutParameter(4, Types.VARCHAR);
             stmt.execute();
             response = stmt.getString(4);
-            ErrorMail.mail(stmt.getString(4), faultCode, faultMessage);
+            ErrorMail.mail(response, faultCode, faultMessage);
             log.info("Successfully store new error into error vault");
         } catch (SQLException err) {
             response = "ErrorVaultDAO (storeError) attempt failed";
@@ -78,13 +74,10 @@ public class ErrorVaultDAO {
     }
 
     public static List<ErrorResponseDTO> getTopErrors(int records){
-        errorList = new ArrayList<>();
-        sql = "{call error_vault_pkg.get_errors(?,?)}";
+        List<ErrorResponseDTO> errorList = new ArrayList<>();
+        String sql = "{call error_vault_pkg.get_errors(?,?)}";
         ResultSet rs;
-        try {
-            Connection con;
-            con = Connect.dbase();
-            stmt = con.prepareCall(sql);
+        try (Connection con = Connect.dbase(); CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setInt(1, records);
             stmt.registerOutParameter(2, OracleTypes.CURSOR);
             stmt.execute();
@@ -95,15 +88,8 @@ public class ErrorVaultDAO {
                     rs.getString(4),
                     rs.getString(5),
                     rs.getString(6)));
-        } catch (Exception err) {
+        } catch (SQLException err) {
             log.error("Database adaptor error occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
-        } finally {
-            try {
-                assert stmt != null;
-                stmt.close();
-            } catch (SQLException err) {
-                log.error("Database adaptor error occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
-            }
         }
         return errorList;
     }
