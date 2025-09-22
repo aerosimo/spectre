@@ -53,10 +53,12 @@ public class ErrorVaultDAO {
     public static String storeError(String faultCode, String faultMessage, String faultService) {
         log.info("Preparing to store new error into error vault");
         String response;
+        Connection con = null;
+        CallableStatement stmt = null;
+        String sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
         try {
-            String sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
-            Connection con = Connect.dbase();
-            CallableStatement stmt = con.prepareCall(sql);
+            con = Connect.dbase();
+            stmt = con.prepareCall(sql);
             stmt.setString(1, faultCode);
             stmt.setString(2, faultMessage);
             stmt.setString(3, faultService);
@@ -68,6 +70,15 @@ public class ErrorVaultDAO {
         } catch (SQLException err) {
             response = "ErrorVaultDAO (storeError) attempt failed";
             log.error("Database adaptor error (storeError) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
+        } finally {
+            // Close the statement and connection
+            try {
+                stmt.close();
+                con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("DB Connection for (storeError) Closed....");
         }
         return response;
     }
@@ -75,10 +86,12 @@ public class ErrorVaultDAO {
     public static List<ErrorResponseDTO> getTopErrors(int records){
         log.info("Preparing to fetch new top errors from error vault");
         List<ErrorResponseDTO> errorList = new ArrayList<>();
+        String sql = "{call error_vault_pkg.get_errors(?,?)}";
+        Connection con = null;
+        CallableStatement stmt = null;
         try {
-            String sql = "{call error_vault_pkg.get_errors(?,?)}";
-            Connection con = Connect.dbase();
-            CallableStatement stmt = con.prepareCall(sql);
+            con = Connect.dbase();
+            stmt = con.prepareCall(sql);
             stmt.setInt(1, records);
             stmt.registerOutParameter(2, OracleTypes.CURSOR);
             stmt.execute();
@@ -91,6 +104,15 @@ public class ErrorVaultDAO {
                     rs.getString(6)));
         } catch (SQLException err) {
             log.error("Database adaptor error (getTopErrors) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
+        } finally {
+            // Close the statement and connection
+            try {
+                stmt.close();
+                con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("DB Connection for (getTopErrors) Closed....");
         }
         return errorList;
     }
