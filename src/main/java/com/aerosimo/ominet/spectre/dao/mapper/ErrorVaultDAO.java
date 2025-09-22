@@ -53,6 +53,7 @@ public class ErrorVaultDAO {
     public static String storeError(String faultCode, String faultMessage, String faultService) {
         log.info("Preparing to store new error into error vault");
         String response;
+        String result;
         Connection con = null;
         CallableStatement stmt = null;
         String sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
@@ -65,7 +66,8 @@ public class ErrorVaultDAO {
             stmt.registerOutParameter(4, Types.VARCHAR);
             stmt.execute();
             response = stmt.getString(4);
-            ErrorMail.mail(response, faultCode, faultMessage);
+            result = ErrorMail.mail(response, faultCode, faultMessage);
+            log.debug("Response from sending email: " + result);
             log.info("Successfully store new error into error vault");
         } catch (SQLException err) {
             response = "ErrorVaultDAO (storeError) attempt failed";
