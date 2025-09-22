@@ -34,7 +34,11 @@ package com.aerosimo.ominet.spectre.service.api;
 import com.aerosimo.ominet.spectre.dao.impl.ErrorRequestDTO;
 import com.aerosimo.ominet.spectre.dao.impl.ErrorResponseDTO;
 import com.aerosimo.ominet.spectre.dao.mapper.ErrorVaultDAO;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
@@ -85,7 +89,7 @@ public class SpectreREST {
      * GET http://host:port/context/api/errors?records=5
      */
     @GET
-    public Response getTopErrors(@QueryParam("records") @DefaultValue("10") int records) {
+    public Response getTopErrors(int records) {
         List<ErrorResponseDTO> errors;
         errors = ErrorVaultDAO.getTopErrors(records);
         log.info("Successfully return top errors from error vault with records {}",records);
