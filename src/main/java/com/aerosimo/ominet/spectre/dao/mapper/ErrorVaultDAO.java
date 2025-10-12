@@ -31,7 +31,7 @@
 
 package com.aerosimo.ominet.spectre.dao.mapper;
 
-import com.aerosimo.ominet.spectre.com.mail.ErrorMail;
+import com.aerosimo.ominet.spectre.mail.ErrorMail;
 import com.aerosimo.ominet.spectre.core.config.Connect;
 import com.aerosimo.ominet.spectre.dao.impl.ErrorResponseDTO;
 import oracle.jdbc.OracleTypes;
@@ -56,7 +56,7 @@ public class ErrorVaultDAO {
         String result;
         Connection con = null;
         CallableStatement stmt = null;
-        String sql = "{call error_vault_pkg.store_error(?,?,?,?)}";
+        String sql = "{call errorVault_pkg.storeError(?,?,?,?)}";
         try {
             con = Connect.dbase();
             stmt = con.prepareCall(sql);
@@ -88,7 +88,7 @@ public class ErrorVaultDAO {
     public static List<ErrorResponseDTO> getTopErrors(int records){
         log.info("Preparing to fetch new top errors from error vault");
         List<ErrorResponseDTO> errorList = new ArrayList<>();
-        String sql = "{call error_vault_pkg.get_errors(?,?)}";
+        String sql = "{call errorVault_pkg.getErrors(?,?)}";
         Connection con = null;
         CallableStatement stmt = null;
         try {
