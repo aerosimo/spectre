@@ -1,4 +1,4 @@
-![MIT License](/img/MIT.png "MIT")
+![MIT License](/src/main/webapp/assets/img/MIT.png "MIT")
 
 <details>
   <summary>License</summary>
@@ -34,7 +34,7 @@ Any reliance you place on such information is therefore strictly at your own ris
 
 ---
 
-![Project Cover](/img/cover.jpg "Spectre")
+![Project Cover](/src/main/webapp/assets/img/cover.jpg "Spectre")
 # Spectre
 > *Spectre is a lightweight, cross-platform service designed to log and track errors across applications and services. It provides both SOAP and REST APIs, along with a simple JSP-based interface for reviewing logged errors.*
 
@@ -51,7 +51,7 @@ This `README.md` gives an overview of the project structure and instructions on 
 
 ## Getting Started
 
-![Project Codes & Tasks](/img/code.jpg "Project Codes and Task")
+![Project Codes & Tasks](/src/main/webapp/assets/img/code.jpg "Project Codes and Task")
 
 ---
 
@@ -214,4 +214,4 @@ We welcome feedback and contributions. Please open an issue or submit a pull req
 
 ---
 
-![Aerosimo Logo.!](/img/logo.png "Aerosimo")
+![Aerosimo Logo.!](/src/main/webapp/assets/img/logo.png "Aerosimo")
