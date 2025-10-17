@@ -31,18 +31,24 @@
 
 package com.aerosimo.ominet.spectre.dao.impl;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.*;
 
 @XmlRootElement(name = "ErrorResponseDTO")
 @XmlType(propOrder = {"errorID","errorRef", "errorTime", "errorCode", "errorMessage", "errorService"})
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorResponseDTO {
 
+    @XmlElement
     private Integer errorID;
+    @XmlElement
     private String errorRef;
+    @XmlElement
     private String errorTime;
+    @XmlElement
     private String errorCode;
+    @XmlElement
     private String errorMessage;
+    @XmlElement
     private String errorService;
 
     public ErrorResponseDTO() {

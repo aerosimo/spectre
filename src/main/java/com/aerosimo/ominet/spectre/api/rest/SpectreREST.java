@@ -48,7 +48,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@Path("/errors")   // <--- resource directly under /api/errors
+@Path("/errors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SpectreREST {

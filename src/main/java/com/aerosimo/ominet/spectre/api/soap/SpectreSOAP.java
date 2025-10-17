@@ -45,8 +45,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@WebService(name = "spectre", serviceName = "spectre",
-        portName = "spectreport", targetNamespace = "https://aerosimo.com/api/ws/spectre")
+@WebService(
+        name = "SpectreService",
+        serviceName = "SpectreService",
+        portName = "SpectrePort",
+        targetNamespace = "https://aerosimo.com/ws")
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 public class SpectreSOAP {
 
