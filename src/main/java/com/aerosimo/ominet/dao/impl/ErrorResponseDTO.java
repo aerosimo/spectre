@@ -3,8 +3,8 @@
  *                                                                            *
  * Author:    eomisore                                                        *
  * File:      ErrorResponseDTO.java                                           *
- * Created:   19/09/2025, 19:18                                               *
- * Modified:  19/09/2025, 19:18                                               *
+ * Created:   17/10/2025, 21:12                                               *
+ * Modified:  26/11/2025, 08:35                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,7 +29,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.dao.impl;
+package com.aerosimo.ominet.dao.impl;
 
 import jakarta.xml.bind.annotation.*;
 

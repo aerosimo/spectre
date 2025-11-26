@@ -3,8 +3,8 @@
  *                                                                            *
  * Author:    eomisore                                                        *
  * File:      SpectreREST.java                                                *
- * Created:   20/09/2025, 15:06                                               *
- * Modified:  20/09/2025, 15:06                                               *
+ * Created:   17/10/2025, 20:51                                               *
+ * Modified:  26/11/2025, 08:36                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,11 +29,13 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.service.api;
+package com.aerosimo.ominet.api;
 
-import com.aerosimo.ominet.spectre.dao.impl.ErrorRequestDTO;
-import com.aerosimo.ominet.spectre.dao.impl.ErrorResponseDTO;
-import com.aerosimo.ominet.spectre.dao.mapper.ErrorVaultDAO;
+import com.aerosimo.ominet.dao.impl.APIResponseDTO;
+import com.aerosimo.ominet.dao.impl.ErrorRequestDTO;
+import com.aerosimo.ominet.dao.impl.ErrorResponseDTO;
+import com.aerosimo.ominet.dao.impl.UpdateRequestDTO;
+import com.aerosimo.ominet.dao.mapper.ErrorVaultDAO;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.GET;
@@ -48,53 +50,59 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@Path("/errors")   // <--- resource directly under /api/errors
+@Path("/errors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SpectreREST {
 
-    private static final Logger log;
+    private static final Logger log = LogManager.getLogger(SpectreREST.class.getName());
 
-    static {
-        log = LogManager.getLogger(SpectreREST.class.getName());
-    }
-    /**
-     * Store a new error in the Error Vault.
-     * POST http://host:port/context/api/errors
-     */
     @POST
-    public Response storeError(ErrorRequestDTO request) {
-        if (request == null ||
-                request.getFaultCode() == null ||
-                request.getFaultMessage() == null ||
-                request.getFaultService() == null) {
-            log.error("Bad request - {}", SpectreREST.class.getName(), Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"Missing required fields\"}")
-                    .build());
+    @Path("/stow")
+    public Response storeError(ErrorRequestDTO req) {
+        if (req == null ||
+                req.getFaultCode() == null ||
+                req.getFaultMessage() == null ||
+                req.getFaultService() == null) {
+            log.error("Missing required parameters in ErrorRequestDTO");
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"Missing required fields\"}")
+                    .entity(new APIResponseDTO("unsuccessful", "missing required fields"))
                     .build();
         }
 
-        String ref = ErrorVaultDAO.storeError(
-                request.getFaultCode(),
-                request.getFaultMessage(),
-                request.getFaultService()
+        APIResponseDTO ref = ErrorVaultDAO.storeError(
+                req.getFaultCode(),
+                req.getFaultMessage(),
+                req.getFaultService()
         );
-        log.info("Successfully store new error into error vault with reference {}",
-                Response.ok("{\"errorRef\":\"" + ref + "\"}").build());
-        return Response.ok("{\"errorRef\":\"" + ref + "\"}").build();
+        return Response.ok(new APIResponseDTO(ref.getStatus(), ref.getMessage())).build();
     }
 
-    /**
-     * Get top N errors from the Error Vault.
-     * GET http://host:port/context/api/errors?records=5
-     */
     @GET
+    @Path("/retrieve")
     public Response getTopErrors(@QueryParam("records") @DefaultValue("10") int records) {
         List<ErrorResponseDTO> errors;
         errors = ErrorVaultDAO.getTopErrors(records);
         log.info("Successfully return top errors from error vault with records {}",records);
         return Response.ok(errors).build();
+    }
+
+    @POST
+    @Path("/overhaul")
+    public Response updateError(UpdateRequestDTO req) {
+        if (req == null ||
+                req.getFaultReference() == null ||
+                req.getFaultStatus() == null) {
+            log.error("Missing required parameters in UpdateRequestDTO");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new APIResponseDTO("unsuccessful", "missing required fields"))
+                    .build();
+        }
+
+        APIResponseDTO ref = ErrorVaultDAO.updateError(
+                req.getFaultReference(),
+                req.getFaultStatus()
+        );
+        return Response.ok(new APIResponseDTO(ref.getStatus(), ref.getMessage())).build();
     }
 }

@@ -2,9 +2,9 @@
  * This piece of work is to enhance spectre project functionality.            *
  *                                                                            *
  * Author:    eomisore                                                        *
- * File:      RestApplication.java                                            *
- * Created:   20/09/2025, 15:11                                               *
- * Modified:  20/09/2025, 15:11                                               *
+ * File:      SpectreApplication.java                                            *
+ * Created:   12/10/2025, 15:27                                               *
+ * Modified:  26/11/2025, 08:35                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,12 +29,12 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.service.api;
+package com.aerosimo.ominet.api;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
-@ApplicationPath("/api")  // <--- all REST resources under /api
-public class RestApplication extends Application {
-    // Empty is fine — TomEE discovers resources automatically
+@ApplicationPath("/api")
+public class SpectreApplication extends Application {
+    // Auto-scans classes annotated with @Path
 }

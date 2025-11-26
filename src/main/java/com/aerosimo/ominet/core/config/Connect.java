@@ -2,9 +2,9 @@
  * This piece of work is to enhance spectre project functionality.            *
  *                                                                            *
  * Author:    eomisore                                                        *
- * File:      ErrorRequestDTO.java                                            *
- * Created:   20/09/2025, 15:07                                               *
- * Modified:  20/09/2025, 15:07                                               *
+ * File:      Connect.java                                                    *
+ * Created:   26/11/2025, 08:34                                               *
+ * Modified:  26/11/2025, 08:35                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,53 +29,31 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.dao.impl;
+package com.aerosimo.ominet.core.config;
 
-public class ErrorRequestDTO {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-    private String faultCode;
-    private String faultMessage;
-    private String faultService;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-    public ErrorRequestDTO() {
-    }
+public class Connect {
 
-    public ErrorRequestDTO(String faultCode, String faultMessage, String faultService) {
-        this.faultCode = faultCode;
-        this.faultMessage = faultMessage;
-        this.faultService = faultService;
-    }
+    private static final Logger log = LogManager.getLogger(Connect.class.getName());
 
-    public String getFaultCode() {
-        return faultCode;
-    }
-
-    public void setFaultCode(String faultCode) {
-        this.faultCode = faultCode;
-    }
-
-    public String getFaultMessage() {
-        return faultMessage;
-    }
-
-    public void setFaultMessage(String faultMessage) {
-        this.faultMessage = faultMessage;
-    }
-
-    public String getFaultService() {
-        return faultService;
-    }
-
-    public void setFaultService(String faultService) {
-        this.faultService = faultService;
-    }
-
-    @Override
-    public String toString() {
-        return "ErrorRequestDTO{" +
-                "faultCode='" + faultCode + '\'' +
-                ", faultMessage='" + faultMessage + '\'' +
-                ", faultService='" + faultService + '\'' +
-                '}';
+    public static Connection dbase() {
+        log.debug("Fetching a new connection from Oracle DataSource");
+        try{
+            log.info("Looking up JNDI DataSource for Oracle DB");
+            InitialContext ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/hats");
+            return ds.getConnection();
+        } catch (NamingException | SQLException err) {
+            log.error("JNDI lookup for Oracle DB failed", err);
+            throw new IllegalStateException("Email session lookup failed", err);
+        }
     }
 }

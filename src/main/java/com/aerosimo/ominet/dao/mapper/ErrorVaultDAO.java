@@ -3,8 +3,8 @@
  *                                                                            *
  * Author:    eomisore                                                        *
  * File:      ErrorVaultDAO.java                                              *
- * Created:   19/09/2025, 19:20                                               *
- * Modified:  19/09/2025, 19:20                                               *
+ * Created:   12/10/2025, 15:23                                               *
+ * Modified:  26/11/2025, 08:35                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,11 +29,12 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.dao.mapper;
+package com.aerosimo.ominet.dao.mapper;
 
-import com.aerosimo.ominet.spectre.mail.ErrorMail;
-import com.aerosimo.ominet.spectre.core.config.Connect;
-import com.aerosimo.ominet.spectre.dao.impl.ErrorResponseDTO;
+import com.aerosimo.ominet.dao.impl.APIResponseDTO;
+import com.aerosimo.ominet.mail.ErrorMail;
+import com.aerosimo.ominet.core.config.Connect;
+import com.aerosimo.ominet.dao.impl.ErrorResponseDTO;
 import oracle.jdbc.OracleTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,16 +45,11 @@ import java.util.List;
 
 public class ErrorVaultDAO {
 
-    private static final Logger log;
+    private static final Logger log = LogManager.getLogger(ErrorVaultDAO.class.getName());
 
-    static {
-        log = LogManager.getLogger(ErrorVaultDAO.class.getName());
-    }
-
-    public static String storeError(String faultCode, String faultMessage, String faultService) {
+    public static APIResponseDTO storeError(String faultCode, String faultMessage, String faultService) {
         log.info("Preparing to store new error into error vault");
-        String response;
-        String result;
+
         Connection con = null;
         CallableStatement stmt = null;
         String sql = "{call errorVault_pkg.storeError(?,?,?,?)}";
@@ -65,16 +61,23 @@ public class ErrorVaultDAO {
             stmt.setString(3, faultService);
             stmt.registerOutParameter(4, Types.VARCHAR);
             stmt.execute();
-            response = stmt.getString(4);
-            result = ErrorMail.mail(response, faultCode, faultMessage);
-            log.debug("Response from sending email: " + result);
-            log.info("Successfully store new error into error vault");
+            String response = stmt.getString(4);
+            if (response.startsWith("ERROR CODE:")){
+                log.info("Unsuccessful in storing new error into error vault with the following - {}", response);
+                return new APIResponseDTO("unsuccessful", response.toLowerCase());
+            } else {
+                String result = ErrorMail.mail(response, faultCode, faultMessage);
+                log.debug("Response from sending error email - {}", result);
+                log.info("Successfully store new error into error vault - {}", response);
+                return new APIResponseDTO("success", response.toLowerCase());
+            }
         } catch (SQLException err) {
-            response = "ErrorVaultDAO (storeError) attempt failed";
             log.error("Database adaptor error (storeError) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
+            return new APIResponseDTO("error","internal server error");
         } finally {
             // Close the statement and connection
             try {
+                assert stmt != null;
                 stmt.close();
                 con.close();
             } catch (SQLException e) {
@@ -82,7 +85,6 @@ public class ErrorVaultDAO {
             }
             log.info("DB Connection for (storeError) Closed....");
         }
-        return response;
     }
 
     public static List<ErrorResponseDTO> getTopErrors(int records){
@@ -109,6 +111,7 @@ public class ErrorVaultDAO {
         } finally {
             // Close the statement and connection
             try {
+                assert stmt != null;
                 stmt.close();
                 con.close();
             } catch (SQLException e) {
@@ -117,5 +120,42 @@ public class ErrorVaultDAO {
             log.info("DB Connection for (getTopErrors) Closed....");
         }
         return errorList;
+    }
+
+    public static APIResponseDTO updateError(String faultReference, String faultStatus) {
+        log.info("Preparing to update error status into error vault");
+
+        Connection con = null;
+        CallableStatement stmt = null;
+        String sql = "{call errorVault_pkg.updateError(?,?,?)}";
+        try {
+            con = Connect.dbase();
+            stmt = con.prepareCall(sql);
+            stmt.setString(1, faultReference);
+            stmt.setString(2, faultStatus);
+            stmt.registerOutParameter(3, Types.VARCHAR);
+            stmt.execute();
+            String response = stmt.getString(3);
+            if (response.startsWith("ERROR CODE:")){
+                log.info("Unsuccessful in updating error status into error vault with the following- {}", response);
+                return new APIResponseDTO("unsuccessful", response.toLowerCase());
+            } else {
+                log.info("Successfully update error status into error vault with the following - {}", response);
+                return new APIResponseDTO("success", response.toLowerCase());
+            }
+        } catch (SQLException err) {
+            log.error("Database adaptor error (updateError) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
+            return new APIResponseDTO("error","internal server error");
+        } finally {
+            // Close the statement and connection
+            try {
+                assert stmt != null;
+                stmt.close();
+                con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("DB Connection for (updateError) Closed....");
+        }
     }
 }

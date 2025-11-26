@@ -2,9 +2,9 @@
  * This piece of work is to enhance spectre project functionality.            *
  *                                                                            *
  * Author:    eomisore                                                        *
- * File:      Connect.java                                                    *
- * Created:   19/09/2025, 16:35                                               *
- * Modified:  19/09/2025, 16:35                                               *
+ * File:      ErrorRequestDTO.java                                            *
+ * Created:   20/09/2025, 15:10                                               *
+ * Modified:  26/11/2025, 08:35                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,33 +29,53 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.core.config;
+package com.aerosimo.ominet.dao.impl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+public class ErrorRequestDTO {
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+    private String faultCode;
+    private String faultMessage;
+    private String faultService;
 
-public class Connect {
+    public ErrorRequestDTO() {
+    }
 
-    private static final Logger log = LogManager.getLogger(Connect.class.getName());
+    public ErrorRequestDTO(String faultCode, String faultMessage, String faultService) {
+        this.faultCode = faultCode;
+        this.faultMessage = faultMessage;
+        this.faultService = faultService;
+    }
 
-    public static Connection dbase() {
-        log.debug("Fetching a new connection from Oracle DataSource");
-        Connection con = null;
-        try{
-            log.info("Looking up JNDI DataSource for Oracle DB");
-            InitialContext ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/hats");
-            con = ds.getConnection();
-            log.info("Connection Established successfully");
-        } catch (NamingException | SQLException err) {
-            log.error("JNDI lookup for Oracle DB failed", err);
-        }
-        return con;
+    public String getFaultCode() {
+        return faultCode;
+    }
+
+    public void setFaultCode(String faultCode) {
+        this.faultCode = faultCode;
+    }
+
+    public String getFaultMessage() {
+        return faultMessage;
+    }
+
+    public void setFaultMessage(String faultMessage) {
+        this.faultMessage = faultMessage;
+    }
+
+    public String getFaultService() {
+        return faultService;
+    }
+
+    public void setFaultService(String faultService) {
+        this.faultService = faultService;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorRequestDTO{" +
+                "faultCode='" + faultCode + '\'' +
+                ", faultMessage='" + faultMessage + '\'' +
+                ", faultService='" + faultService + '\'' +
+                '}';
     }
 }

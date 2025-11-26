@@ -1,7 +1,3 @@
-<%@ page contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ This piece of work is to enhance spectre project functionality.           ~
   ~                                                                           ~
@@ -33,6 +29,12 @@
   ~                                                                           ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" +
+                     request.getServerPort() + request.getContextPath() + "/api/errors";
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,7 +48,7 @@
     <meta content="Oracle, Java, Tomcat, Maven, Jenkins, Bitbucket, Github" name="keywords">
     <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport" />
     <!-- Title -->
-    <title>Spectre | Aerosimo Ltd</title>
+    <title>Spectre Tester | Aerosimo Ltd</title>
     <!-- Favicon-->
     <link href="assets/img/favicon.ico" rel="shortcut icon"/>
     <link href="assets/img/favicon.ico" rel="icon" type="image/x-icon">
@@ -55,51 +57,129 @@
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
     <link href="assets/img/android-chrome-192x192.png" rel="android-chrome" sizes="192x192">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #0072c6;
-        }
-
-        p {
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        a {
-            text-decoration: none;
-            color: #0072c6;
-            font-weight: bold;
-        }
+        /* -------------------- Sentinel Theme Core Styles -------------------- */
+        body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f4; margin: 0; padding: 0;}
+        .container { max-width: 1000px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+        h1, h2 { color: #4d3b7a; margin-bottom: 20px;}
+        p { font-size: 16px; line-height: 1.6; margin-bottom: 20px;}
+        input, select, button { font-size: 14px; padding: 10px; margin: 5px 0; border-radius: 4px; border: 1px solid #ccc; }
+        input:focus, select:focus { outline: none; border-color: #4d3b7a; box-shadow: 0 0 5px rgba(77, 59, 122, 0.3);}
+        button { background-color: #4d3b7a; color: #fff; border: none; cursor: pointer; transition: 0.2s; }
+        button:hover { background-color: #39286b; }
+        .btn-primary { background-color: #4d3b7a; color: #fff; }
+        .btn-secondary { background-color: #888; color: #fff; }
+        .btn-warning { background-color: #ff9800; color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table th, table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        table th { background-color: #f0f0f0; }
+        .response-box { margin-top: 10px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; white-space: pre-wrap; border-radius: 4px; font-family: monospace; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Welcome to Spectre by Aerosimo</h1>
-    <p>Spectre is a shared error handling service for all
-               applications and will provide a single location to manage and aggregate
-               faults that occurs, regardless of the service or binding component in
-               which the fault occurred.</p>
-    <c:set var="baseUrl"
-           value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}" />
-    <p>
-        To access the web services, please click here: <a href="${baseUrl}/ws/spectre">here</a>
-    </p>
-    <p>
-        The current timestamp is:
-        <%=new java.util.Date()%>
-    </p>
+    <h1>Spectre REST Tester</h1>
+    <p>Interact with Spectre endpoints in real-time. This is a standalone interface for testing and monitoring errors.</p>
+
+    <!-- Store Error Form -->
+    <h2>Store New Error</h2>
+    <form id="stowForm">
+        <input type="text" id="faultCode" placeholder="Fault Code" required />
+        <input type="text" id="faultMessage" placeholder="Fault Message" required />
+        <input type="text" id="faultService" placeholder="Service Name" required />
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+    <div id="stowResponse" class="response-box"></div>
+
+    <!-- Retrieve Top Errors -->
+    <h2>Top Errors</h2>
+    <input type="number" id="topRecords" placeholder="Number of records" value="10" />
+    <button id="fetchTop" class="btn btn-secondary">Fetch</button>
+    <table id="topErrorsTable">
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Fault Code</th>
+                <th>Message</th>
+                <th>Service</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Update Error Form -->
+    <h2>Update Error Status</h2>
+    <form id="updateForm">
+        <input type="text" id="faultReference" placeholder="Fault Reference" required />
+        <select id="faultStatus" required>
+            <option value="">--Select Status--</option>
+            <option value="OPEN">OPEN</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="IGNORED">IGNORED</option>
+        </select>
+        <button type="submit" class="btn btn-warning">Update</button>
+    </form>
+    <div id="updateResponse" class="response-box"></div>
+</div>
+
+<script>
+    const baseUrl = '<%=baseUrl%>';
+
+    // ---- Store Error ----
+    document.getElementById('stowForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            faultCode: document.getElementById('faultCode').value,
+            faultMessage: document.getElementById('faultMessage').value,
+            faultService: document.getElementById('faultService').value
+        };
+        fetch(baseUrl + '/stow', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json())
+          .then(resp => document.getElementById('stowResponse').innerText = JSON.stringify(resp, null, 2))
+          .catch(err => document.getElementById('stowResponse').innerText = err);
+    });
+
+    // ---- Fetch Top Errors ----
+    document.getElementById('fetchTop').addEventListener('click', function() {
+        const records = document.getElementById('topRecords').value || 10;
+        fetch(baseUrl + '/retrieve?records=' + records)
+            .then(res => res.json())
+            .then(errors => {
+                const tbody = document.querySelector('#topErrorsTable tbody');
+                tbody.innerHTML = '';
+                errors.forEach(err => {
+                    tbody.innerHTML += `<tr>
+                        <td>${err.faultReference}</td>
+                        <td>${err.faultCode}</td>
+                        <td>${err.faultMessage}</td>
+                        <td>${err.faultService}</td>
+                        <td>${err.faultStatus}</td>
+                        <td>${err.faultTimestamp}</td>
+                    </tr>`;
+                });
+            })
+            .catch(err => alert('Failed to fetch errors: ' + err));
+    });
+
+    // ---- Update Error ----
+    document.getElementById('updateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            faultReference: document.getElementById('faultReference').value,
+            faultStatus: document.getElementById('faultStatus').value
+        };
+        fetch(baseUrl + '/overhaul', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json())
+          .then(resp => document.getElementById('updateResponse').innerText = JSON.stringify(resp, null, 2))
+          .catch(err => document.getElementById('updateResponse').innerText = err);
+    });
+</script>
 </body>
 </html>

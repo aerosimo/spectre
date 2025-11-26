@@ -2,9 +2,9 @@
  * This piece of work is to enhance spectre project functionality.            *
  *                                                                            *
  * Author:    eomisore                                                        *
- * File:      RestApplication.java                                            *
- * Created:   20/09/2025, 15:11                                               *
- * Modified:  20/09/2025, 15:11                                               *
+ * File:      APIResponseDTO.java                                             *
+ * Created:   26/11/2025, 08:55                                               *
+ * Modified:  26/11/2025, 08:55                                               *
  *                                                                            *
  * Copyright (c)  2025.  Aerosimo Ltd                                         *
  *                                                                            *
@@ -29,12 +29,42 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.aerosimo.ominet.spectre.api.rest;
+package com.aerosimo.ominet.dao.impl;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
+public class APIResponseDTO {
 
-@ApplicationPath("/api")  // <--- all REST resources under /api
-public class RestApplication extends Application {
-    // Empty is fine — TomEE discovers resources automatically
+    private String status;
+    private String message;
+
+    public APIResponseDTO() {
+    }
+
+    public APIResponseDTO(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "APIResponseDTO{" +
+                "status='" + status + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

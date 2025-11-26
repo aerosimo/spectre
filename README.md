@@ -101,7 +101,7 @@ The required dependencies are defined in `pom.xml`. Below are the key dependenci
 
 ### 1. **SOAP Web Service** (JAX-WS)
 
-The SOAP web service is implemented in `com.aerosimo.ominet.spectre.api.soap.SpectreSOAP.java`.
+The SOAP web service is implemented in `soap.api.com.aerosimo.ominet.SpectreSOAP.java`.
 
 Example recordError SOAP Request:
 ```xml
@@ -166,7 +166,7 @@ Example getTopErrors SOAP Response:
 ```
 ### 2. **REST Web Service** (JAX-RS)
 
-The REST web service is implemented in `com.aerosimo.ominet.spectre.api.rest.SpectreREST.java`.
+The REST web service is implemented in `rest.api.com.aerosimo.ominet.SpectreREST.java`.
 
 Example recordError REST Request:
 ```json
