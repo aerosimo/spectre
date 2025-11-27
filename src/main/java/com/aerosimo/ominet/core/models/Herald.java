@@ -31,6 +31,9 @@
 
 package com.aerosimo.ominet.core.models;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -40,8 +43,8 @@ import java.nio.charset.StandardCharsets;
 
 public class Herald {
 
-    private static final String MAILBRIDGE_ENDPOINT =
-            "https://ominet.aerosimo.com:9443/mailbridge/api/bridge/dispatch";
+    private static final Logger log = LogManager.getLogger(Herald.class.getName());
+    private static final String MAILBRIDGE_ENDPOINT = "https://ominet.aerosimo.com:9443/mailbridge/api/bridge/dispatch";
 
     public static String announce(String emailAddress,
                                   String emailSubject,
@@ -56,6 +59,8 @@ public class Herald {
                         "\"emailFiles\": \"%s\" }",
                 emailAddress, emailSubject, emailMessage, emailFiles);
 
+        log.info("Sending email to: {}", emailAddress);
+
         // Open connection
         URL url = new URL(MAILBRIDGE_ENDPOINT);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -67,10 +72,12 @@ public class Herald {
         try (OutputStream os = conn.getOutputStream()) {
             byte[] input = payload.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
+            log.info("Sent email payload: {}", input);
         }
 
         // Read response
         int statusCode = conn.getResponseCode();
+        log.info("Status code: {}", statusCode);
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 (statusCode >= 200 && statusCode < 300)
                         ? conn.getInputStream()
@@ -78,12 +85,14 @@ public class Herald {
                 StandardCharsets.UTF_8));
 
         StringBuilder response = new StringBuilder();
+        log.info("Response body: {}", br.readLine());
         String line;
         while ((line = br.readLine()) != null) {
             response.append(line.trim());
         }
 
         conn.disconnect();
+        log.info("Response body: {}", response.toString());
         return response.toString();
     }
 }
