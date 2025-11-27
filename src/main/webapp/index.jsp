@@ -51,11 +51,22 @@
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
     <link href="assets/img/android-chrome-192x192.png" rel="android-chrome" sizes="192x192">
     <style>
-      height: 180px;
-      color: white;
-      display: flex;
-      align-items: center;
-      padding-left: 40px;
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f5f8;
+        color: #333;
+      }
+
+      /* Wavy Header */
+      .header {
+        position: relative;
+        background: linear-gradient(135deg, #4d3b7a 0%, #7356c8 100%);
+        height: 180px;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding-left: 40px;
       }
 
       .header img {
@@ -147,49 +158,98 @@ background-size: cover;
           margin-top: 10px;
           white-space: pre-wrap;
         }
+
+        .header {
+          position: relative;
+          background: linear-gradient(135deg, #4d3b7a 0%, #7356c8 100%);
+          height: 240px;
+          color: white;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+
+        .header-inner img {
+          height: 90px;
+          display: block;
+          margin: 0 auto 10px auto;
+        }
+
+        .header-title {
+          font-size: 34px;
+          font-weight: bold;
+        }
+
+        .header::after {
+          content: "";
+          position: absolute;
+          bottom: -60px;
+          left: 0;
+          width: 100%;
+          height: 120px;
+          background: url('data:image/svg+xml;utf8,
+<svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 1440 320"> <path fill="%23f5f5f8"d="M0,256L48,234.7C96,213,192,171,288,144C384,117,480,107,576,133.3C672,160,768,224,864,245.3C960,267,1056,245,1152,229.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path> </svg>');
+background-size: cover;
+          }
+
+          /* CARD GRID */
+          .grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+          }
+
+          .full {
+            grid-column: span 2;
+          }
     </style>
   </head>
   <body>
     <!-- HEADER WITH WAVE + LOGO -->
     <div class="header">
-      <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
-      <div class="header-title">Spectre REST Tester</div>
+      <div class="header-inner">
+        <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
+        <div class="header-title">Spectre REST Tester</div>
+      </div>
+    </div>
     </div>
     <div class="content">
-      <!-- BASE URL CALCULATION --><%
-    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/errors";
-    %> <p>
-        <strong>Base URL:</strong><%= baseUrl %>
-      </p>
-      <!-- CARD 1: STORE ERROR -->
-      <div class="card">
-        <h2>Store Error (POST /stow)</h2>
-        <label>Fault Code</label>
-        <input id="stowCode" />
-        <label>Fault Message</label>
-        <textarea id="stowMessage"></textarea>
-        <label>Fault Service</label>
-        <input id="stowService" />
-        <button onclick="storeError()">Send</button>
-        <div id="stowOutput" class="output"></div>
-      </div>
-      <!-- CARD 2: RETRIEVE ERRORS -->
-      <div class="card">
-        <h2>Retrieve Errors (GET /retrieve)</h2>
-        <label>Number of Records</label>
-        <input id="retrieveCount" value="10" />
-        <button onclick="retrieveErrors()">Retrieve</button>
-        <div id="retrieveOutput" class="output"></div>
-      </div>
-      <!-- CARD 3: UPDATE ERROR -->
-      <div class="card">
-        <h2>Update Error (POST /overhaul)</h2>
-        <label>Fault Reference</label>
-        <input id="updateRef" />
-        <label>New Status</label>
-        <input id="updateStatus" />
-        <button onclick="updateError()">Update</button>
-        <div id="updateOutput" class="output"></div>
+      <div class="grid">
+        <!-- BASE URL CALCULATION --><%
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/errors";
+        %> <p>
+          <strong>Base URL:</strong><%= baseUrl %>
+        </p>
+        <!-- CARD 1: STORE ERROR -->
+        <div class="card">
+          <h2>Store Error (POST /stow)</h2>
+          <label>Fault Code</label>
+          <input id="stowCode" />
+          <label>Fault Message</label>
+          <textarea id="stowMessage"></textarea>
+          <label>Fault Service</label>
+          <input id="stowService" />
+          <button onclick="storeError()">Send</button>
+          <div id="stowOutput" class="output"></div>
+        </div>
+        <!-- CARD 3: UPDATE ERROR -->
+        <div class="card">
+          <h2>Update Error (POST /overhaul)</h2>
+          <label>Fault Reference</label>
+          <input id="updateRef" />
+          <label>New Status</label>
+          <input id="updateStatus" />
+          <button onclick="updateError()">Update</button>
+          <div id="updateOutput" class="output"></div>
+        </div>
+        <!-- CARD 2: RETRIEVE ERRORS -->
+        <div class="card full">
+          <h2>Retrieve Errors (GET /retrieve)</h2>
+          <label>Number of Records</label>
+          <input id="retrieveCount" value="10" />
+          <button onclick="retrieveErrors()">Retrieve</button>
+          <div id="retrieveOutput" class="output"></div>
+        </div>
+        <!-- END GRID -->
       </div>
     </div>
     <script>
