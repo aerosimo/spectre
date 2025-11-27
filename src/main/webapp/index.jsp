@@ -55,28 +55,31 @@
       body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #f5f5f8;
-        color: #333;
+        background: linear-gradient(135deg, #1b0d2b 0%, #2c1f4c 100%);
+        color: #eee;
+        min-height: 100vh;
       }
 
       /* Wavy Header */
       .header {
         position: relative;
         background: linear-gradient(135deg, #4d3b7a 0%, #7356c8 100%);
-        height: 180px;
+        height: 200px;
         color: white;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        padding-left: 40px;
+        justify-content: center;
+        text-align: center;
       }
 
       .header img {
-        height: 80px;
-        margin-right: 20px;
+        height: 100px;
+        margin-bottom: 10px;
       }
 
       .header-title {
-        font-size: 32px;
+        font-size: 36px;
         font-weight: bold;
       }
 
@@ -84,44 +87,45 @@
       .header::after {
         content: "";
         position: absolute;
-        bottom: -40px;
+        bottom: -50px;
         left: 0;
         width: 100%;
-        height: 80px;
+        height: 100px;
         background: url('data:image/svg+xml;utf8,
 <svg viewBox="0 0 1440 320"
-            xmlns="http://www.w3.org/2000/svg"> <path fill="%23f5f5f8"d="M0,224L48,186.7C96,149,192,75,288,42.7C384,11,480,21,576,53.3C672,85,768,139,864,160C960,181,1056,171,1152,170.7C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/> </svg>');
+            xmlns="http://www.w3.org/2000/svg"> <path fill="%232c1f4c"d="M0,128L48,160C96,192,192,256,288,266.7C384,277,480,235,576,224C672,213,768,235,864,245.3C960,256,1056,256,1152,229.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/> </svg>');
 background-size: cover;
         }
 
         /* Content Container */
         .content {
-          max-width: 900px;
+          max-width: 1000px;
           margin: 80px auto 40px auto;
           padding: 20px;
         }
 
         /* Cards */
         .card {
-          background: white;
+          background: #1f1b2f;
           border-radius: 12px;
           padding: 20px;
           margin-bottom: 20px;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
           border-left: 6px solid transparent;
           transition: 0.3s;
+          color: #eee;
         }
 
         .card:hover,
         .card:focus-within {
-          background: #fff9d6;
+          background: #3e2a6b;
           border-left-color: #e6b800;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
         }
 
         h2 {
           margin-top: 0;
-          color: #4d3b7a;
+          color: #f5f5f8;
         }
 
         label {
@@ -134,8 +138,10 @@ background-size: cover;
           width: 100%;
           padding: 10px;
           border-radius: 6px;
-          border: 1px solid #ccc;
+          border: 1px solid #555;
           margin-top: 5px;
+          background: #2c1f4c;
+          color: #eee;
         }
 
         button {
@@ -149,79 +155,49 @@ background-size: cover;
         }
 
         button:hover {
-          background: #382c5d;
+          background: #7356c8;
         }
 
         .output {
-          background: #eee;
+          background: #2c1f4c;
           padding: 15px;
           border-radius: 8px;
           margin-top: 10px;
           white-space: pre-wrap;
+          color: #fff;
         }
 
-        .header {
-          position: relative;
-          background: linear-gradient(135deg, #4d3b7a 0%, #7356c8 100%);
-          height: 240px;
-          color: white;
+        /* Cards layout */
+        .row {
           display: flex;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
+          gap: 20px;
+          flex-wrap: wrap;
         }
 
-        .header-inner img {
-          height: 90px;
-          display: block;
-          margin: 0 auto 10px auto;
+        .col-half {
+          flex: 1 1 48%;
         }
 
-        .header-title {
-          font-size: 34px;
-          font-weight: bold;
+        .col-full {
+          flex: 1 1 100%;
         }
-
-        .header::after {
-          content: "";
-          position: absolute;
-          bottom: -60px;
-          left: 0;
-          width: 100%;
-          height: 120px;
-          background: url('data:image/svg+xml;utf8,
-<svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 1440 320"> <path fill="%23f5f5f8"d="M0,256L48,234.7C96,213,192,171,288,144C384,117,480,107,576,133.3C672,160,768,224,864,245.3C960,267,1056,245,1152,229.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path> </svg>');
-background-size: cover;
-          }
-
-          /* CARD GRID */
-          .grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
-          }
-
-          .full {
-            grid-column: span 2;
-          }
     </style>
   </head>
   <body>
     <!-- HEADER WITH WAVE + LOGO -->
     <div class="header">
-      <div class="header-inner">
-        <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
-        <div class="header-title">Spectre REST Tester</div>
-      </div>
-    </div>
+      <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
+      <div class="header-title">Spectre REST Tester</div>
     </div>
     <div class="content">
-      <div class="grid">
-        <!-- BASE URL CALCULATION --><%
+      <!-- BASE URL CALCULATION --><%
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/errors";
         %> <p>
-          <strong>Base URL:</strong><%= baseUrl %>
-        </p>
+        <strong>Base URL:</strong><%= baseUrl %>
+      </p>
+      <div class="row">
         <!-- CARD 1: STORE ERROR -->
-        <div class="card">
+        <div class="card col-half">
           <h2>Store Error (POST /stow)</h2>
           <label>Fault Code</label>
           <input id="stowCode" />
@@ -233,7 +209,7 @@ background-size: cover;
           <div id="stowOutput" class="output"></div>
         </div>
         <!-- CARD 3: UPDATE ERROR -->
-        <div class="card">
+        <div class="card col-half">
           <h2>Update Error (POST /overhaul)</h2>
           <label>Fault Reference</label>
           <input id="updateRef" />
@@ -243,14 +219,13 @@ background-size: cover;
           <div id="updateOutput" class="output"></div>
         </div>
         <!-- CARD 2: RETRIEVE ERRORS -->
-        <div class="card full">
+        <div class="card col-full">
           <h2>Retrieve Errors (GET /retrieve)</h2>
           <label>Number of Records</label>
           <input id="retrieveCount" value="10" />
           <button onclick="retrieveErrors()">Retrieve</button>
           <div id="retrieveOutput" class="output"></div>
         </div>
-        <!-- END GRID -->
       </div>
     </div>
     <script>
