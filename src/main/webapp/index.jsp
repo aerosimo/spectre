@@ -197,8 +197,14 @@
   </head>
   <body>
     <div class="container">
-      <h1>Spectre REST Tester</h1>
-      <p>Interact with Spectre endpoints in real-time. This standalone interface allows testing and monitoring errors.</p>
+      <div class="header" style="text-align:center; margin-bottom: 30px;">
+          <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo"
+               style="height:100px; display:block; margin:0 auto;" />
+          <h1 style="color:#cfa6ff; margin-top:20px;">Spectre REST Tester</h1>
+          <p style="color:#ddd; font-size:16px; max-width:600px; margin:10px auto 0 auto;">
+              Interact with Spectre endpoints in real-time. This standalone interface allows testing and monitoring errors.
+          </p>
+      </div>
       <!-- CARD 1: Store Error -->
       <div class="card">
         <h2>Store New Error</h2>
