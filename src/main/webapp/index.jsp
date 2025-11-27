@@ -79,11 +79,6 @@
 <div class="container">
     <h1>Spectre REST Tester</h1>
     <p>Interact with Spectre endpoints in real-time. This is a standalone interface for testing and monitoring errors.</p>
-    <div class="container">
-        <h1>Spectre REST Tester</h1>
-        <p>baseUrl = <%= baseUrl %></p>
-    </div>
-
 
     <!-- Store Error Form -->
     <h2>Store New Error</h2>
@@ -150,7 +145,7 @@
 
     // ---- Fetch Top Errors ----
     document.getElementById('fetchTop').addEventListener('click', function() {
-        const records = document.getElementById('topRecords').value || 2;
+        const records = document.getElementById('topRecords').value || 10;
         fetch(baseUrl + '/retrieve?records=' + records)
             .then(res => res.json())
             .then(errors => {
