@@ -28,8 +28,10 @@
   ~ OR OTHER DEALINGS IN THE SOFTWARE.                                        ~
   ~                                                                           ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<%@ page contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %><%
+    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" +
+                     request.getServerPort() + request.getContextPath() + "/api/errors";
+%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -51,56 +53,250 @@
     <link href="assets/img/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
     <link href="assets/img/android-chrome-192x192.png" rel="android-chrome" sizes="192x192">
-    <!-- Bootstrap CSS -->
-    <link href="assets/css/main.css" rel="stylesheet">
+    <style>
+      /* -------------------- Dark Sentinel Theme -------------------- */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #1e1e2f;
+        margin: 0;
+        padding: 0;
+        color: #ddd;
+      }
 
+      .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: #2b2b3c;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      h1,
+      h2 {
+        color: #cfa6ff;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      /* Inputs, selects, buttons */
+      input,
+      select,
+      button {
+        font-size: 14px;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 4px;
+        border: 1px solid #555;
+        background: #333;
+        color: #ddd;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #cfa6ff;
+        box-shadow: 0 0 5px rgba(207, 166, 255, 0.5);
+      }
+
+      button {
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-primary {
+        background-color: #7356c8;
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background-color: #4d3b7a;
+      }
+
+      .btn-secondary {
+        background-color: #555;
+        color: #fff;
+      }
+
+      .btn-secondary:hover {
+        background-color: #777;
+      }
+
+      .btn-warning {
+        background-color: #ff9800;
+        color: #1e1e2f;
+      }
+
+      .btn-warning:hover {
+        background-color: #e68a00;
+      }
+
+      /* Response Box */
+      .response-box {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #555;
+        background: #1e1e2f;
+        color: #ddd;
+        white-space: pre-wrap;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      /* Table Styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        color: #ddd;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #444;
+        padding: 10px;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #3a3a4f;
+      }
+
+      table tr:nth-child(even) {
+        background-color: #2e2e41;
+      }
+
+      table tr:hover {
+        background-color: #3e3e5a;
+      }
+
+      /* Cards */
+      .card {
+        background: #2b2b3c;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        border-left: 6px solid transparent;
+        transition: 0.3s;
+      }
+
+      .card:hover,
+      .card:focus-within {
+        background: #3e2e5a;
+        border-left-color: #cfa6ff;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+      }
+    </style>
   </head>
   <body>
-    <!-- HEADER WITH WAVE + LOGO -->
-    <div class="header">
-      <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
-      <div class="header-title">Spectre REST Tester</div>
-    </div>
-    <div class="content">
-      <!-- BASE URL CALCULATION --><%
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/errors";
-        %> <p>
-        <strong>Base URL:</strong><%= baseUrl %>
-      </p>
-      <div class="row">
-        <!-- CARD 1: STORE ERROR -->
-        <div class="card col-half">
-          <h2>Store Error (POST /stow)</h2>
-          <label>Fault Code</label>
-          <input id="stowCode" />
-          <label>Fault Message</label>
-          <textarea id="stowMessage"></textarea>
-          <label>Fault Service</label>
-          <input id="stowService" />
-          <button onclick="storeError()">Send</button>
-          <div id="stowOutput" class="output"></div>
-        </div>
-        <!-- CARD 3: UPDATE ERROR -->
-        <div class="card col-half">
-          <h2>Update Error (POST /overhaul)</h2>
-          <label>Fault Reference</label>
-          <input id="updateRef" />
-          <label>New Status</label>
-          <input id="updateStatus" />
-          <button onclick="updateError()">Update</button>
-          <div id="updateOutput" class="output"></div>
-        </div>
-        <!-- CARD 2: RETRIEVE ERRORS -->
-        <div class="card col-full">
-          <h2>Retrieve Errors (GET /retrieve)</h2>
-          <label>Number of Records</label>
-          <input id="retrieveCount" value="10" />
-          <button onclick="retrieveErrors()">Retrieve</button>
-          <div id="retrieveOutput" class="output"></div>
-        </div>
+    <div class="container">
+      <h1>Spectre REST Tester</h1>
+      <p>Interact with Spectre endpoints in real-time. This standalone interface allows testing and monitoring errors.</p>
+      <!-- CARD 1: Store Error -->
+      <div class="card">
+        <h2>Store New Error</h2>
+        <form id="stowForm">
+          <input type="text" id="faultCode" placeholder="Fault Code" required />
+          <input type="text" id="faultMessage" placeholder="Fault Message" required />
+          <input type="text" id="faultService" placeholder="Service Name" required />
+          <button type="submit" class="btn-primary">Send</button>
+        </form>
+        <div id="stowResponse" class="response-box"></div>
+      </div>
+      <!-- CARD 2: Retrieve Errors -->
+      <div class="card">
+        <h2>Top Errors</h2>
+        <input type="number" id="topRecords" placeholder="Number of records" value="10" />
+        <button id="fetchTop" class="btn-secondary">Fetch</button>
+        <table id="topErrorsTable">
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Fault Code</th>
+              <th>Message</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <!-- CARD 3: Update Error -->
+      <div class="card">
+        <h2>Update Error Status</h2>
+        <form id="updateForm">
+          <input type="text" id="faultReference" placeholder="Fault Reference" required />
+          <select id="faultStatus" required>
+            <option value="">--Select Status--</option>
+            <option value="OPEN">OPEN</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="IGNORED">IGNORED</option>
+          </select>
+          <button type="submit" class="btn-warning">Update</button>
+        </form>
+        <div id="updateResponse" class="response-box"></div>
       </div>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="assets/js/main.js"></script>
+    <script>
+      const baseUrl = '<%=baseUrl%>';
+      // ---- Store Error ----
+      document.getElementById('stowForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+          faultCode: document.getElementById('faultCode').value,
+          faultMessage: document.getElementById('faultMessage').value,
+          faultService: document.getElementById('faultService').value
+        };
+        fetch(baseUrl + '/stow', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }).then(res => res.json()).then(resp => document.getElementById('stowResponse').innerText = JSON.stringify(resp, null, 2)).catch(err => document.getElementById('stowResponse').innerText = err);
+      });
+      // ---- Fetch Top Errors ----
+      document.getElementById('fetchTop').addEventListener('click', function() {
+        const records = document.getElementById('topRecords').value || 10;
+        fetch(baseUrl + '/retrieve?records=' + records).then(res => res.json()).then(errors => {
+          const tbody = document.querySelector('#topErrorsTable tbody');
+          tbody.innerHTML = '';
+          errors.forEach(err => {
+            tbody.innerHTML += `
+						<tr>
+							<td>${err.faultReference}</td>
+							<td>${err.faultCode}</td>
+							<td>${err.faultMessage}</td>
+							<td>${err.faultService}</td>
+							<td>${err.faultStatus}</td>
+							<td>${err.faultTimestamp}</td>
+						</tr>`;
+          });
+        }).catch(err => alert('Failed to fetch errors: ' + err));
+      });
+      // ---- Update Error ----
+      document.getElementById('updateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+          faultReference: document.getElementById('faultReference').value,
+          faultStatus: document.getElementById('faultStatus').value
+        };
+        fetch(baseUrl + '/overhaul', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }).then(res => res.json()).then(resp => document.getElementById('updateResponse').innerText = JSON.stringify(resp, null, 2)).catch(err => document.getElementById('updateResponse').innerText = err);
+      });
+    </script>
   </body>
 </html>
