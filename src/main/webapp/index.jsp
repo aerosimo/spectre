@@ -252,57 +252,68 @@
       </div>
     </div>
     <script>
-// ---- Store Error ----
-document.getElementById('stowForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+    // Inject JSP base URL into JavaScript
+    const baseUrl = '<%= baseUrl %>';
 
-    const data = {
-        faultCode: document.getElementById('faultCode').value,
-        faultMessage: document.getElementById('faultMessage').value,
-        faultService: document.getElementById('faultService').value
-    };
+    // ---- Store Error ----
+    document.getElementById('stowForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    const res = await fetch(baseUrl + '/stow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        const data = {
+            faultCode: document.getElementById('faultCode').value,
+            faultMessage: document.getElementById('faultMessage').value,
+            faultService: document.getElementById('faultService').value
+        };
+
+        const res = await fetch(baseUrl + '/stow', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        document.getElementById('stowResponse').innerText = await res.text();
     });
 
-    document.getElementById('stowResponse').innerText = await res.text();
-});
+    // ---- Fetch Top Errors ----
+    document.getElementById('fetchTop').addEventListener('click', async function() {
+        const records = document.getElementById('topRecords').value || 10;
 
+        const res = await fetch(baseUrl + '/retrieve?records=' + records);
+        const text = await res.text();
 
-// ---- Fetch Top Errors ----
-document.getElementById('fetchTop').addEventListener('click', async function() {
-    const records = document.getElementById('topRecords').value || 10;
+        // Just show raw text for now (until JSON parsing is needed)
+        const table = document.getElementById('topErrorsTable');
+        table.style.display = 'none';
 
-    const res = await fetch(baseUrl + '/retrieve?records=' + records);
-    const text = await res.text();
+        // Add a new output box for raw text if you want
+        if (!document.getElementById('retrieveOutput')) {
+            const output = document.createElement('div');
+            output.id = 'retrieveOutput';
+            output.className = 'response-box';
+            table.parentNode.insertBefore(output, table);
+        }
 
-    // Show raw response
-    document.getElementById('topErrorsTable').style.display = 'none';
-    document.getElementById('retrieveOutput').innerText = text;
-});
-
-
-// ---- Update Error ----
-document.getElementById('updateForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const data = {
-        faultReference: document.getElementById('faultReference').value,
-        faultStatus: document.getElementById('faultStatus').value
-    };
-
-    const res = await fetch(baseUrl + '/overhaul', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        document.getElementById('retrieveOutput').innerText = text;
     });
 
-    document.getElementById('updateResponse').innerText = await res.text();
-});
+    // ---- Update Error ----
+    document.getElementById('updateForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
+        const data = {
+            faultReference: document.getElementById('faultReference').value,
+            faultStatus: document.getElementById('faultStatus').value
+        };
+
+        const res = await fetch(baseUrl + '/overhaul', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        document.getElementById('updateResponse').innerText = await res.text();
+    });
     </script>
+
   </body>
 </html>
