@@ -29,15 +29,9 @@
   ~                                                                           ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" +
-                     request.getServerPort() + request.getContextPath() + "/api/errors";
-%>
-
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta content="Elijah Omisore" name="author">
     <meta content="Aerosimo 1.0.0" name="generator">
@@ -50,136 +44,190 @@
     <!-- Title -->
     <title>Spectre Tester | Aerosimo Ltd</title>
     <!-- Favicon-->
-    <link href="assets/img/favicon.ico" rel="shortcut icon"/>
+    <link href="assets/img/favicon.ico" rel="shortcut icon" />
     <link href="assets/img/favicon.ico" rel="icon" type="image/x-icon">
     <link href="assets/img/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
     <link href="assets/img/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
     <link href="assets/img/android-chrome-192x192.png" rel="android-chrome" sizes="192x192">
     <style>
-        /* -------------------- Sentinel Theme Core Styles -------------------- */
-        body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f4; margin: 0; padding: 0;}
-        .container { max-width: 1000px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
-        h1, h2 { color: #4d3b7a; margin-bottom: 20px;}
-        p { font-size: 16px; line-height: 1.6; margin-bottom: 20px;}
-        input, select, button { font-size: 14px; padding: 10px; margin: 5px 0; border-radius: 4px; border: 1px solid #ccc; }
-        input:focus, select:focus { outline: none; border-color: #4d3b7a; box-shadow: 0 0 5px rgba(77, 59, 122, 0.3);}
-        button { background-color: #4d3b7a; color: #fff; border: none; cursor: pointer; transition: 0.2s; }
-        button:hover { background-color: #39286b; }
-        .btn-primary { background-color: #4d3b7a; color: #fff; }
-        .btn-secondary { background-color: #888; color: #fff; }
-        .btn-warning { background-color: #ff9800; color: #fff; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        table th, table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        table th { background-color: #f0f0f0; }
-        .response-box { margin-top: 10px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; white-space: pre-wrap; border-radius: 4px; font-family: monospace; }
+      height: 180px;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding-left: 40px;
+      }
+
+      .header img {
+        height: 80px;
+        margin-right: 20px;
+      }
+
+      .header-title {
+        font-size: 32px;
+        font-weight: bold;
+      }
+
+      /* Wave Shape */
+      .header::after {
+        content: "";
+        position: absolute;
+        bottom: -40px;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background: url('data:image/svg+xml;utf8,
+<svg viewBox="0 0 1440 320"
+            xmlns="http://www.w3.org/2000/svg"> <path fill="%23f5f5f8"d="M0,224L48,186.7C96,149,192,75,288,42.7C384,11,480,21,576,53.3C672,85,768,139,864,160C960,181,1056,171,1152,170.7C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/> </svg>');
+background-size: cover;
+        }
+
+        /* Content Container */
+        .content {
+          max-width: 900px;
+          margin: 80px auto 40px auto;
+          padding: 20px;
+        }
+
+        /* Cards */
+        .card {
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 20px;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+          border-left: 6px solid transparent;
+          transition: 0.3s;
+        }
+
+        .card:hover,
+        .card:focus-within {
+          background: #fff9d6;
+          border-left-color: #e6b800;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+          margin-top: 0;
+          color: #4d3b7a;
+        }
+
+        label {
+          display: block;
+          margin-top: 10px;
+          font-weight: bold;
+        }
+
+        input, textarea {
+          width: 100%;
+          padding: 10px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          margin-top: 5px;
+        }
+
+        button {
+          margin-top: 15px;
+          padding: 10px 15px;
+          background: #4d3b7a;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background: #382c5d;
+        }
+
+        .output {
+          background: #eee;
+          padding: 15px;
+          border-radius: 8px;
+          margin-top: 10px;
+          white-space: pre-wrap;
+        }
     </style>
-</head>
-<body>
-<div class="container">
-    <h1>Spectre REST Tester</h1>
-    <p>Interact with Spectre endpoints in real-time. This is a standalone interface for testing and monitoring errors.</p>
-
-    <!-- Store Error Form -->
-    <h2>Store New Error</h2>
-    <form id="stowForm">
-        <input type="text" id="faultCode" placeholder="Fault Code" required />
-        <input type="text" id="faultMessage" placeholder="Fault Message" required />
-        <input type="text" id="faultService" placeholder="Service Name" required />
-        <button type="submit" class="btn btn-primary">Send</button>
-    </form>
-    <div id="stowResponse" class="response-box"></div>
-
-    <!-- Retrieve Top Errors -->
-    <h2>Top Errors</h2>
-    <input type="number" id="topRecords" placeholder="Number of records" value="10" />
-    <button id="fetchTop" class="btn btn-secondary">Fetch</button>
-    <table id="topErrorsTable">
-        <thead>
-            <tr>
-                <th>Reference</th>
-                <th>Fault Code</th>
-                <th>Message</th>
-                <th>Service</th>
-                <th>Status</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <!-- Update Error Form -->
-    <h2>Update Error Status</h2>
-    <form id="updateForm">
-        <input type="text" id="faultReference" placeholder="Fault Reference" required />
-        <select id="faultStatus" required>
-            <option value="">--Select Status--</option>
-            <option value="OPEN">OPEN</option>
-            <option value="RESOLVED">RESOLVED</option>
-            <option value="IGNORED">IGNORED</option>
-        </select>
-        <button type="submit" class="btn btn-warning">Update</button>
-    </form>
-    <div id="updateResponse" class="response-box"></div>
-</div>
-
-<script>
-    const baseUrl = '<%=baseUrl%>';
-
-    // ---- Store Error ----
-    document.getElementById('stowForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = {
-            faultCode: document.getElementById('faultCode').value,
-            faultMessage: document.getElementById('faultMessage').value,
-            faultService: document.getElementById('faultService').value
+  </head>
+  <body>
+    <!-- HEADER WITH WAVE + LOGO -->
+    <div class="header">
+      <img src="https://thumbs4.imagebam.com/3e/10/82/MED2HDH_t.png" alt="Aerosimo Logo" />
+      <div class="header-title">Spectre REST Tester</div>
+    </div>
+    <div class="content">
+      <!-- BASE URL CALCULATION --><%
+    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/errors";
+    %> <p>
+        <strong>Base URL:</strong><%= baseUrl %>
+      </p>
+      <!-- CARD 1: STORE ERROR -->
+      <div class="card">
+        <h2>Store Error (POST /stow)</h2>
+        <label>Fault Code</label>
+        <input id="stowCode" />
+        <label>Fault Message</label>
+        <textarea id="stowMessage"></textarea>
+        <label>Fault Service</label>
+        <input id="stowService" />
+        <button onclick="storeError()">Send</button>
+        <div id="stowOutput" class="output"></div>
+      </div>
+      <!-- CARD 2: RETRIEVE ERRORS -->
+      <div class="card">
+        <h2>Retrieve Errors (GET /retrieve)</h2>
+        <label>Number of Records</label>
+        <input id="retrieveCount" value="10" />
+        <button onclick="retrieveErrors()">Retrieve</button>
+        <div id="retrieveOutput" class="output"></div>
+      </div>
+      <!-- CARD 3: UPDATE ERROR -->
+      <div class="card">
+        <h2>Update Error (POST /overhaul)</h2>
+        <label>Fault Reference</label>
+        <input id="updateRef" />
+        <label>New Status</label>
+        <input id="updateStatus" />
+        <button onclick="updateError()">Update</button>
+        <div id="updateOutput" class="output"></div>
+      </div>
+    </div>
+    <script>
+      const base = '<%= baseUrl %>';
+      async function storeError() {
+        const body = {
+          faultCode: document.getElementById('stowCode').value,
+          faultMessage: document.getElementById('stowMessage').value,
+          faultService: document.getElementById('stowService').value
         };
-        fetch(baseUrl + '/stow', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json())
-          .then(resp => document.getElementById('stowResponse').innerText = JSON.stringify(resp, null, 2))
-          .catch(err => document.getElementById('stowResponse').innerText = err);
-    });
-
-    // ---- Fetch Top Errors ----
-    document.getElementById('fetchTop').addEventListener('click', function() {
-        const records = document.getElementById('topRecords').value || 10;
-        fetch(baseUrl + '/retrieve?records=' + records)
-            .then(res => res.json())
-            .then(errors => {
-                const tbody = document.querySelector('#topErrorsTable tbody');
-                tbody.innerHTML = '';
-                errors.forEach(err => {
-                    tbody.innerHTML += `<tr>
-                        <td>${err.faultReference}</td>
-                        <td>${err.faultCode}</td>
-                        <td>${err.faultMessage}</td>
-                        <td>${err.faultService}</td>
-                        <td>${err.faultStatus}</td>
-                        <td>${err.faultTimestamp}</td>
-                    </tr>`;
-                });
-            })
-            .catch(err => alert('Failed to fetch errors: ' + err));
-    });
-
-    // ---- Update Error ----
-    document.getElementById('updateForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = {
-            faultReference: document.getElementById('faultReference').value,
-            faultStatus: document.getElementById('faultStatus').value
+        const res = await fetch(base + '/stow', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        document.getElementById('stowOutput').innerText = await res.text();
+      }
+      async function retrieveErrors() {
+        const count = document.getElementById('retrieveCount').value;
+        const res = await fetch(base + '/retrieve?records=' + count);
+        document.getElementById('retrieveOutput').innerText = await res.text();
+      }
+      async function updateError() {
+        const body = {
+          faultReference: document.getElementById('updateRef').value,
+          faultStatus: document.getElementById('updateStatus').value
         };
-        fetch(baseUrl + '/overhaul', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => res.json())
-          .then(resp => document.getElementById('updateResponse').innerText = JSON.stringify(resp, null, 2))
-          .catch(err => document.getElementById('updateResponse').innerText = err);
-    });
-</script>
-</body>
+        const res = await fetch(base + '/overhaul', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        document.getElementById('updateOutput').innerText = await res.text();
+      }
+    </script>
+  </body>
 </html>
