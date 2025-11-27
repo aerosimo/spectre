@@ -31,6 +31,8 @@
 
 package com.aerosimo.ominet.core.models;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,59 +42,57 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class Herald {
 
     private static final Logger log = LogManager.getLogger(Herald.class.getName());
-    private static final String MAILBRIDGE_ENDPOINT = "https://ominet.aerosimo.com:9443/mailbridge/api/bridge/dispatch";
+    private static final String ENDPOINT_URL = "https://ominet.aerosimo.com:9443/mailbridge/api/bridge/dispatch";
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static String announce(String emailAddress,
-                                  String emailSubject,
-                                  String emailMessage,
-                                  String emailFiles) throws Exception {
+    public static String announce(String emailAddress, String emailSubject, String emailMessage, String emailFiles) {
+        try {
+            Map<String, Object> payload = Map.of(
+                    "emailAddress", emailAddress,
+                    "emailSubject", emailSubject,
+                    "emailMessage", emailMessage,
+                    "emailFiles", emailFiles);
+            log.info("Sending email to: {}", emailAddress);
 
-        // Build JSON payload
-        String payload = String.format(
-                "{ \"emailAddress\": \"%s\", " +
-                        "\"emailSubject\": \"%s\", " +
-                        "\"emailMessage\": \"%s\", " +
-                        "\"emailFiles\": \"%s\" }",
-                emailAddress, emailSubject, emailMessage, emailFiles);
+            String jsonRequest = mapper.writeValueAsString(payload);
 
-        log.info("Sending email to: {}", emailAddress);
+            HttpURLConnection conn = (HttpURLConnection) new URL(ENDPOINT_URL).openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
 
-        // Open connection
-        URL url = new URL(MAILBRIDGE_ENDPOINT);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        conn.setDoOutput(true);
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(jsonRequest.getBytes(StandardCharsets.UTF_8));
+            }
 
-        // Send payload
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = payload.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-            log.info("Sent email payload: {}", input);
+            int statusCode = conn.getResponseCode();
+            log.info("Status code: {}", statusCode);
+            if (statusCode == HttpURLConnection.HTTP_OK || statusCode == HttpURLConnection.HTTP_CREATED) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+                    StringBuilder responseBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        responseBuilder.append(line);
+                    }
+                    Map<String, String> result = mapper.readValue(responseBuilder.toString(), new TypeReference<>() {
+                    });
+                    return result.getOrDefault("Status", "Message sent successfully");
+                }
+            } else {
+                log.error("Postmaster REST failed with HTTP code {}", statusCode);
+                return "Message not successful: HTTP " + statusCode;
+            }
+
+        } catch (Exception err) {
+            log.error("Email Notification Service failed in {} with error: ", Herald.class.getName(), err);
+            return "Message not successful";
         }
-
-        // Read response
-        int statusCode = conn.getResponseCode();
-        log.info("Status code: {}", statusCode);
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                (statusCode >= 200 && statusCode < 300)
-                        ? conn.getInputStream()
-                        : conn.getErrorStream(),
-                StandardCharsets.UTF_8));
-
-        StringBuilder response = new StringBuilder();
-        log.info("Response body: {}", br.readLine());
-        String line;
-        while ((line = br.readLine()) != null) {
-            response.append(line.trim());
-        }
-
-        conn.disconnect();
-        log.info("Response body: {}", response.toString());
-        return response.toString();
     }
 }

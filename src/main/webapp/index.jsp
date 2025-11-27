@@ -252,57 +252,57 @@
       </div>
     </div>
     <script>
-      const baseUrl = '<%=baseUrl%>';
-      // ---- Store Error ----
-      document.getElementById('stowForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = {
-          faultCode: document.getElementById('faultCode').value,
-          faultMessage: document.getElementById('faultMessage').value,
-          faultService: document.getElementById('faultService').value
-        };
-        fetch(baseUrl + '/stow', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }).then(res => res.json()).then(resp => document.getElementById('stowResponse').innerText = JSON.stringify(resp, null, 2)).catch(err => document.getElementById('stowResponse').innerText = err);
-      });
-      // ---- Fetch Top Errors ----
-      document.getElementById('fetchTop').addEventListener('click', function() {
-        const records = document.getElementById('topRecords').value || 10;
-        fetch(baseUrl + '/retrieve?records=' + records).then(res => res.json()).then(errors => {
-          const tbody = document.querySelector('#topErrorsTable tbody');
-          tbody.innerHTML = '';
-          errors.forEach(err => {
-            tbody.innerHTML += `
-						<tr>
-							<td>${err.faultReference}</td>
-							<td>${err.faultCode}</td>
-							<td>${err.faultMessage}</td>
-							<td>${err.faultService}</td>
-							<td>${err.faultStatus}</td>
-							<td>${err.faultTimestamp}</td>
-						</tr>`;
-          });
-        }).catch(err => alert('Failed to fetch errors: ' + err));
-      });
-      // ---- Update Error ----
-      document.getElementById('updateForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = {
-          faultReference: document.getElementById('faultReference').value,
-          faultStatus: document.getElementById('faultStatus').value
-        };
-        fetch(baseUrl + '/overhaul', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }).then(res => res.json()).then(resp => document.getElementById('updateResponse').innerText = JSON.stringify(resp, null, 2)).catch(err => document.getElementById('updateResponse').innerText = err);
-      });
+// ---- Store Error ----
+document.getElementById('stowForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const data = {
+        faultCode: document.getElementById('faultCode').value,
+        faultMessage: document.getElementById('faultMessage').value,
+        faultService: document.getElementById('faultService').value
+    };
+
+    const res = await fetch(baseUrl + '/stow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    document.getElementById('stowResponse').innerText = await res.text();
+});
+
+
+// ---- Fetch Top Errors ----
+document.getElementById('fetchTop').addEventListener('click', async function() {
+    const records = document.getElementById('topRecords').value || 10;
+
+    const res = await fetch(baseUrl + '/retrieve?records=' + records);
+    const text = await res.text();
+
+    // Show raw response
+    document.getElementById('topErrorsTable').style.display = 'none';
+    document.getElementById('retrieveOutput').innerText = text;
+});
+
+
+// ---- Update Error ----
+document.getElementById('updateForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const data = {
+        faultReference: document.getElementById('faultReference').value,
+        faultStatus: document.getElementById('faultStatus').value
+    };
+
+    const res = await fetch(baseUrl + '/overhaul', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    document.getElementById('updateResponse').innerText = await res.text();
+});
+
     </script>
   </body>
 </html>
