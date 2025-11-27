@@ -46,8 +46,9 @@ This `README.md` gives an overview of the project structure and instructions on 
 
 ## Features
 
-1. **SOAP & REST Web Service**: Exposes a `recordError(String faultCode, String faultMessage, String faultService)` method to record new error.
-2. **SOAP & REST Web Service**: Exposes a `getTopErrors(int records)` method to show number of recent errors based on number specified.
+1. **REST Web Service**: Exposes a `stow(String faultCode, String faultMessage, String faultService)` method to record new error.
+2. **REST Web Service**: Exposes a `retrieve(int records)` method to show number of recent errors based on number specified.
+3. **REST Web Service**: Exposes a `overhaul(String faultReference, String faultStatus)` method to update the error status.
 
 ## Getting Started
 
@@ -93,82 +94,20 @@ The required dependencies are defined in `pom.xml`. Below are the key dependenci
 
    Start server and access the application:
 
-    - SOAP Service: WSDL at `http://localhost:8081/soap/spectre?wsdl`
-    - REST Service: http://localhost:8081/spectre/api/errors
+    - REST Service: http://localhost:8081/spectre/api/errors/stow
     - Web Interface: `http://localhost:8081/spectre/index.jsp`
 
 ## Detailed Explanation of Components
 
-### 1. **SOAP Web Service** (JAX-WS)
+###  **REST Web Service** (JAX-RS)
 
-The SOAP web service is implemented in `soap.api.com.aerosimo.ominet.SpectreSOAP.java`.
+The REST web service is implemented in `rest.api.com.aerosimo.ominet.api.SpectreREST.java`.
 
-Example recordError SOAP Request:
-```xml
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
-               xmlns:err="https://aerosimo.com/api/ws/spectre">
-    <soap:Header/>
-    <soap:Body>
-        <err:recordError>
-            <faultcode>TE10001</faultcode>
-            <faultmessage>Random system fault</faultmessage>
-            <faultservicename>SoapUI</faultservicename>
-        </err:recordError>
-    </soap:Body>
-</soap:Envelope>
-```
-Example recordError SOAP Response:
-```xml
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
-    <soap:Body>
-        <err:recordErrorResponse xmlns:err="https://aerosimo.com/api/ws/spectre">
-            <recordError>ERR|DCWINE62CGH28KQ3DSA0</recordError>
-        </err:recordErrorResponse>
-    </soap:Body>
-</soap:Envelope>
-```
-Example getTopErrors SOAP Request:
-```xml
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
-               xmlns:err="https://aerosimo.com/api/ws/spectre">
-    <soap:Header/>
-    <soap:Body>
-        <err:getTopErrors>
-            <records>2</records>
-        </err:getTopErrors>
-    </soap:Body>
-</soap:Envelope>
-```
-Example getTopErrors SOAP Response:
-```xml
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
-    <soap:Body>
-        <err:getTopErrorsResponse xmlns:err="https://aerosimo.com/api/ws/spectre">
-            <getTopErrors>
-                <errorID>6</errorID>
-                <errorRef>ERR|H13B8DNF47G4ZYCBUIWT</errorRef>
-                <errorTime>2025-09-18 23:46:04.18626 +1:00</errorTime>
-                <errorCode>-1722</errorCode>
-                <errorMessage>ORA-01722: invalid number</errorMessage>
-                <errorService>auth_pkg (LOG AUDIT): babyboi@omisore.co.uk</errorService>
-            </getTopErrors>
-            <getTopErrors>
-                <errorID>5</errorID>
-                <errorRef>ERR|CC4LEQH95INM78P55JR2</errorRef>
-                <errorTime>2025-09-18 23:39:35.909077 +1:00</errorTime>
-                <errorCode>-1722</errorCode>
-                <errorMessage>ORA-01722: invalid number</errorMessage>
-                <errorService>auth_pkg (LOG AUDIT): babyboi@omisore.co.uk</errorService>
-            </getTopErrors>
-        </err:getTopErrorsResponse>
-    </soap:Body>
-</soap:Envelope>
-```
-### 2. **REST Web Service** (JAX-RS)
+Example stow REST Request:
 
-The REST web service is implemented in `rest.api.com.aerosimo.ominet.SpectreREST.java`.
-
-Example recordError REST Request:
+```curl
+POST: https://localhost:8080/spectre/api/errors/stow
+```
 ```json
       {
         "faultCode": "ERR1234",
@@ -177,17 +116,18 @@ Example recordError REST Request:
       }
 
 ```
-Example recordError REST Response:
+Example stow REST Response:
 ```json
     {
-      "errorRef": "ERR|AK0IHE"
+      "status": "success",
+      "message": "ERR|AK0IHE"
     }
 ```
-Example getTopErrors REST Request:
+Example retrieve REST Request:
 ```curl
-GET: http://ominet.aerosimo.com:8081/spectre/api/errors?records=2
+GET: http://localhost:8080/spectre/api/retrieve?records=2
 ```
-Example getTopErrors REST Response:
+Example retrieve REST Response:
 ```json
 [
   {
@@ -207,6 +147,24 @@ Example getTopErrors REST Response:
     "errorService": "SoapUI"
   }
 ]
+```
+Example overhaul REST Request:
+```curl
+POST: http://localhost:8080/spectre/api/errors/overhaul
+```
+Example overhaul REST Request:
+```json
+  {
+    "faultReference": "ERR|AK0IHE",
+    "faultStatus": "Resolved"
+  }
+```
+Example overhaul REST Response:
+```json
+  {
+    "status": "unsuccessful",
+    "message": "missing required fields"
+  }
 ```
 ## Contributing
 
