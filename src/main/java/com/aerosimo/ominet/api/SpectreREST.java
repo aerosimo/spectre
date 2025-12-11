@@ -101,7 +101,8 @@ public class SpectreREST {
 
         APIResponseDTO ref = ErrorVaultDAO.updateError(
                 req.getFaultReference(),
-                req.getFaultStatus()
+                req.getFaultStatus(),
+                req.getFaultState()
         );
         return Response.ok(new APIResponseDTO(ref.getStatus(), ref.getMessage())).build();
     }

@@ -49,13 +49,9 @@ public class ErrorVaultDAO {
 
     public static APIResponseDTO storeError(String faultCode, String faultMessage, String faultService) {
         log.info("Preparing to store new error into error vault");
-
-        Connection con = null;
-        CallableStatement stmt = null;
         String sql = "{call errorVault_pkg.storeError(?,?,?,?)}";
-        try {
-            con = Connect.dbase();
-            stmt = con.prepareCall(sql);
+        try (Connection con = Connect.dbase();
+             CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setString(1, faultCode);
             stmt.setString(2, faultMessage);
             stmt.setString(3, faultService);
@@ -74,16 +70,6 @@ public class ErrorVaultDAO {
         } catch (SQLException err) {
             log.error("Database adaptor error (storeError) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
             return new APIResponseDTO("error","internal server error");
-        } finally {
-            // Close the statement and connection
-            try {
-                assert stmt != null;
-                stmt.close();
-                con.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            log.info("DB Connection for (storeError) Closed....");
         }
     }
 
@@ -91,51 +77,42 @@ public class ErrorVaultDAO {
         log.info("Preparing to fetch new top errors from error vault");
         List<ErrorResponseDTO> errorList = new ArrayList<>();
         String sql = "{call errorVault_pkg.getErrors(?,?)}";
-        Connection con = null;
-        CallableStatement stmt = null;
-        try {
-            con = Connect.dbase();
-            stmt = con.prepareCall(sql);
+        try (Connection con = Connect.dbase();
+             CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setInt(1, records);
             stmt.registerOutParameter(2, OracleTypes.CURSOR);
             stmt.execute();
-            ResultSet rs = (ResultSet) stmt.getObject(2);
-            while (rs.next()) errorList.add(new ErrorResponseDTO(rs.getInt(1),
-                    rs.getString(2),
-                    rs.getString(3),
-                    rs.getString(4),
-                    rs.getString(5),
-                    rs.getString(6)));
+            try (ResultSet rs = (ResultSet) stmt.getObject(2)) {
+                while (rs != null && rs.next()) {
+                    ErrorResponseDTO fault = new ErrorResponseDTO();
+                    fault.setErrorID(Integer.valueOf(rs.getString("errorId")));
+                    fault.setErrorRef(rs.getString("errorReference"));
+                    fault.setErrorTime(rs.getString("errorTime"));
+                    fault.setErrorCode(rs.getString("errorCode"));
+                    fault.setErrorMessage(rs.getString("errorMessage"));
+                    fault.setErrorService(rs.getString("errorService"));
+                    fault.setErrorStatus(rs.getString("errorStatus"));
+                    fault.setErrorSate(rs.getString("errorSate"));
+                    errorList.add(fault);
+                }
+            }
         } catch (SQLException err) {
             log.error("Database adaptor error (getTopErrors) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
-        } finally {
-            // Close the statement and connection
-            try {
-                assert stmt != null;
-                stmt.close();
-                con.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            log.info("DB Connection for (getTopErrors) Closed....");
         }
         return errorList;
     }
 
-    public static APIResponseDTO updateError(String faultReference, String faultStatus) {
+    public static APIResponseDTO updateError(String faultReference, String faultStatus, String faultState) {
         log.info("Preparing to update error status into error vault");
-
-        Connection con = null;
-        CallableStatement stmt = null;
-        String sql = "{call errorVault_pkg.updateError(?,?,?)}";
-        try {
-            con = Connect.dbase();
-            stmt = con.prepareCall(sql);
+        String sql = "{call errorVault_pkg.updateError(?,?,?,?)}";
+        try (Connection con = Connect.dbase();
+             CallableStatement stmt = con.prepareCall(sql)) {
             stmt.setString(1, faultReference);
             stmt.setString(2, faultStatus);
-            stmt.registerOutParameter(3, Types.VARCHAR);
+            stmt.setString(3, faultStatus);
+            stmt.registerOutParameter(4, Types.VARCHAR);
             stmt.execute();
-            String response = stmt.getString(3);
+            String response = stmt.getString(4);
             if (response.startsWith("ERROR CODE:")){
                 log.info("Unsuccessful in updating error status into error vault with the following- {}", response);
                 return new APIResponseDTO("unsuccessful", response.toLowerCase());
@@ -146,16 +123,6 @@ public class ErrorVaultDAO {
         } catch (SQLException err) {
             log.error("Database adaptor error (updateError) occurred with the following - {}", ErrorVaultDAO.class.getName(), err);
             return new APIResponseDTO("error","internal server error");
-        } finally {
-            // Close the statement and connection
-            try {
-                assert stmt != null;
-                stmt.close();
-                con.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            log.info("DB Connection for (updateError) Closed....");
         }
     }
 }

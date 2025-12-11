@@ -35,13 +35,15 @@ public class UpdateRequestDTO {
 
     private String faultReference;
     private String faultStatus;
+    private String faultState;
 
     public UpdateRequestDTO() {
     }
 
-    public UpdateRequestDTO(String faultReference, String faultStatus) {
+    public UpdateRequestDTO(String faultReference, String faultStatus, String faultState) {
         this.faultReference = faultReference;
         this.faultStatus = faultStatus;
+        this.faultState = faultState;
     }
 
     public String getFaultReference() {
@@ -60,11 +62,20 @@ public class UpdateRequestDTO {
         this.faultStatus = faultStatus;
     }
 
+    public String getFaultState() {
+        return faultState;
+    }
+
+    public void setFaultState(String faultState) {
+        this.faultState = faultState;
+    }
+
     @Override
     public String toString() {
         return "UpdateRequestDTO{" +
                 "faultReference='" + faultReference + '\'' +
                 ", faultStatus='" + faultStatus + '\'' +
+                ", faultState='" + faultState + '\'' +
                 '}';
     }
 }

@@ -31,36 +31,29 @@
 
 package com.aerosimo.ominet.dao.impl;
 
-import jakarta.xml.bind.annotation.*;
-
-@XmlRootElement(name = "ErrorResponseDTO")
-@XmlType(propOrder = {"errorID","errorRef", "errorTime", "errorCode", "errorMessage", "errorService"})
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorResponseDTO {
 
-    @XmlElement
     private Integer errorID;
-    @XmlElement
     private String errorRef;
-    @XmlElement
     private String errorTime;
-    @XmlElement
     private String errorCode;
-    @XmlElement
     private String errorMessage;
-    @XmlElement
     private String errorService;
+    private String errorStatus;
+    private String errorSate;
 
     public ErrorResponseDTO() {
     }
 
-    public ErrorResponseDTO(Integer errorID, String errorRef, String errorTime, String errorCode, String errorMessage, String errorService) {
+    public ErrorResponseDTO(Integer errorID, String errorRef, String errorTime, String errorCode, String errorMessage, String errorService, String errorStatus, String errorSate) {
         this.errorID = errorID;
         this.errorRef = errorRef;
         this.errorTime = errorTime;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.errorService = errorService;
+        this.errorStatus = errorStatus;
+        this.errorSate = errorSate;
     }
 
     public Integer getErrorID() {
@@ -111,6 +104,22 @@ public class ErrorResponseDTO {
         this.errorService = errorService;
     }
 
+    public String getErrorStatus() {
+        return errorStatus;
+    }
+
+    public void setErrorStatus(String errorStatus) {
+        this.errorStatus = errorStatus;
+    }
+
+    public String getErrorSate() {
+        return errorSate;
+    }
+
+    public void setErrorSate(String errorSate) {
+        this.errorSate = errorSate;
+    }
+
     @Override
     public String toString() {
         return "ErrorResponseDTO{" +
@@ -120,6 +129,8 @@ public class ErrorResponseDTO {
                 ", errorCode='" + errorCode + '\'' +
                 ", errorMessage='" + errorMessage + '\'' +
                 ", errorService='" + errorService + '\'' +
+                ", errorStatus='" + errorStatus + '\'' +
+                ", errorSate='" + errorSate + '\'' +
                 '}';
     }
 }
